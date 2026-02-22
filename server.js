@@ -2,18 +2,81 @@ require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { Server } = require("socket.io");
+const connectDB = require("./config/db");
 
 const PORT = process.env.PORT || 8085;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
+connectDB();
 const app = express();
-app.use(cors());
+
+// // i am using devtunnels for testing, so I need to trust the proxy to allow secure cookies to work properly
+// app.set("trust proxy", 1);
+
+// CORS configuration - dynamic based on environment
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'https://4q9600bl-5173.inc1.devtunnels.ms',
+  FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
+
+
+
+// // For development/testing, allow all origins (not recommended for production)
+// app.use(cors({
+//   origin: "*",
+//   credentials: true
+// }));
+
+
+
+
+
+app.use(express.json());
+app.use(cookieParser());
+
+// Import routes
+const userRoutes = require("./routes/user.routes");
+
+// Mount routes
+app.use("/api/users", userRoutes);
+
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // ⚠️ restrict in production
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
     methods: ["GET", "POST"],
   },
 });
@@ -52,6 +115,7 @@ io.on("connection", (socket) => {
     if (!data?.room || !data?.message) return;
 
     socket.to(data.room).emit("receive_message", data);
+    // console.log(data.message);
   });
 
   // ---------------- TYPING START ----------------
@@ -88,6 +152,7 @@ io.on("connection", (socket) => {
     console.log("🔴 User disconnected:", socket.id);
   });
 });
+
 
 server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

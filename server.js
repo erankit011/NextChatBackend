@@ -20,7 +20,6 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
-  'https://4q9600bl-5173.inc1.devtunnels.ms',
   FRONTEND_URL
 ].filter(Boolean);
 
@@ -41,21 +40,10 @@ app.use(cors({
 }));
 
 
-
-
-
-// // For development/testing, allow all origins (not recommended for production)
-// app.use(cors({
-//   origin: "*",
-//   credentials: true
-// }));
-
-
-
-
-
 app.use(express.json());
 app.use(cookieParser());
+
+
 
 // Import routes
 const userRoutes = require("./routes/user.routes");
@@ -84,6 +72,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+
 
 // Helper: create system message
 const createSystemMessage = (room, message) => ({

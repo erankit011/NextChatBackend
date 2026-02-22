@@ -7,7 +7,6 @@ services:
     region: oregon
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /api/users
     envVars:
       - key: NODE_ENV
         value: production
@@ -22,6 +21,8 @@ services:
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASS
+        sync: false
+      - key: SUPPORT_EMAIL
         sync: false
       - key: FRONTEND_URL
         sync: false

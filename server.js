@@ -60,8 +60,12 @@ app.use(cookieParser());
 // Import routes
 const userRoutes = require("./routes/user.routes");
 
+const contactRoutes = require("./routes/contact.routes");
+
 // Mount routes
 app.use("/api/users", userRoutes);
+
+app.use("/api/contact", contactRoutes);
 
 
 const server = http.createServer(app);
@@ -154,6 +158,11 @@ io.on("connection", (socket) => {
 });
 
 
-server.listen(PORT, () => {
+// server.listen(PORT, () => {
+//   console.log(`🚀 Server running on http://localhost:${PORT}`);
+// });
+
+
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

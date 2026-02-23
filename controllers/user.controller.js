@@ -193,6 +193,9 @@ const forgotPassword = async (req, res) => {
           <p>This link will expire in 15 minutes.</p>
           <h3>Password Reset</h3>
       `
+    }).catch(emailError => {
+      console.error("Email sending failed:", emailError);
+      throw new Error("Failed to send reset email. Please try again later.");
     });
 
     return res.json({
@@ -201,9 +204,15 @@ const forgotPassword = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Forgot password error:", {
+      message: error.message,
+      code: error.code,
+      email: req.body?.email,
+    });
+
     return res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message || "Failed to process password reset request",
     });
   }
 };

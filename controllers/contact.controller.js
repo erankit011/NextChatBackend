@@ -63,14 +63,24 @@ const sendContactMessage = async (req, res) => {
     // Log error with context for debugging
     console.error("Contact form submission error:", {
       error: error.message,
-      stack: error.stack,
+      code: error.code,
+      command: error.command,
       timestamp: new Date().toISOString(),
       userEmail: req.body?.email || "unknown",
     });
 
+    // Provide user-friendly error message
+    let errorMessage = "Failed to send message. Please try again later.";
+    
+    if (error.code === 'EAUTH') {
+      errorMessage = "Email service authentication failed. Please contact support.";
+    } else if (error.code === 'ECONNECTION' || error.code === 'ETIMEDOUT') {
+      errorMessage = "Email service is temporarily unavailable. Please try again later.";
+    }
+
     return res.status(500).json({
       success: false,
-      error: "Failed to send message. Please try again later.",
+      error: errorMessage,
     });
   }
 };

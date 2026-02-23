@@ -2,7 +2,7 @@ const UserModel = require("../models/user.model");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const transporter = require("../services/mail.service");
+const resend = require("../services/mail.service");
 
 // Helper function to generate JWT token
 const generateToken = (userId) => {
@@ -183,19 +183,21 @@ const forgotPassword = async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: 'NextChat <onboarding@resend.dev>',
       to: user.email,
       subject: "Reset your password",
       html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">Password Reset Request</h2>
           <p>Click the link below to reset your password:</p>
-          <a href="${resetLink}">${resetLink}</a>
-          <p>This link will expire in 15 minutes.</p>
-          <h3>Password Reset</h3>
+          <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset Password</a>
+          <p>Or copy and paste this link:</p>
+          <p style="color: #666; word-break: break-all;">${resetLink}</p>
+          <p style="color: #999; font-size: 12px; margin-top: 30px;">This link will expire in 15 minutes.</p>
+          <p style="color: #999; font-size: 12px;">If you didn't request this, please ignore this email.</p>
+        </div>
       `
-    }).catch(emailError => {
-      console.error("Email sending failed:", emailError);
-      throw new Error("Failed to send reset email. Please try again later.");
     });
 
     return res.json({
@@ -204,15 +206,9 @@ const forgotPassword = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Forgot password error:", {
-      message: error.message,
-      code: error.code,
-      email: req.body?.email,
-    });
-
     return res.status(500).json({
       success: false,
-      error: error.message || "Failed to process password reset request",
+      error: error.message,
     });
   }
 };

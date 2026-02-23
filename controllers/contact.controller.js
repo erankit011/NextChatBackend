@@ -1,7 +1,7 @@
-const transporter = require("../services/mail.service");
+const resend = require("../services/mail.service");
 
 /**
- * Send contact support message via email
+ * Send contact support message via email using Resend
  * @route POST /api/contact
  * @access Public
  */
@@ -19,7 +19,7 @@ const sendContactMessage = async (req, res) => {
       timeZoneName: 'short'
     });
 
-    // Generate HTML email content using template from design
+    // Generate HTML email content
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #333;">New Contact Support Request</h2>
@@ -43,15 +43,15 @@ const sendContactMessage = async (req, res) => {
       </div>
     `;
 
-    // Send email to configured support address
+    // Send email using Resend
     const supportEmail = process.env.SUPPORT_EMAIL || process.env.EMAIL_USER;
     
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: 'NextChat Support <onboarding@resend.dev>', // Resend verified domain
       to: supportEmail,
       subject: `Contact Support Request from ${name}`,
       html: emailHtml,
-      replyTo: email, // Allow easy reply to the user
+      reply_to: email, // Allow easy reply to the user
     });
 
     return res.status(200).json({
@@ -63,8 +63,7 @@ const sendContactMessage = async (req, res) => {
     // Log error with context for debugging
     console.error("Contact form submission error:", {
       error: error.message,
-      code: error.code,
-      command: error.command,
+      name: error.name,
       timestamp: new Date().toISOString(),
       userEmail: req.body?.email || "unknown",
     });
@@ -72,10 +71,8 @@ const sendContactMessage = async (req, res) => {
     // Provide user-friendly error message
     let errorMessage = "Failed to send message. Please try again later.";
     
-    if (error.code === 'EAUTH') {
-      errorMessage = "Email service authentication failed. Please contact support.";
-    } else if (error.code === 'ECONNECTION' || error.code === 'ETIMEDOUT') {
-      errorMessage = "Email service is temporarily unavailable. Please try again later.";
+    if (error.message?.includes('API key')) {
+      errorMessage = "Email service is not configured. Please contact support.";
     }
 
     return res.status(500).json({

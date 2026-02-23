@@ -183,21 +183,102 @@ const forgotPassword = async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
+    // Modern professional password reset email template
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reset Your Password</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                
+                <!-- Header with NextChat Branding -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #000000 0%, #434343 100%); padding: 40px 30px; text-align: center;">
+                    <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">
+                      NextChat
+                    </h1>
+                    <p style="margin: 12px 0 0 0; color: #e0e0e0; font-size: 16px; font-weight: 500;">
+                      Password Reset Request
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    
+                    <!-- Greeting -->
+                    <h2 style="margin: 0 0 20px 0; color: #111827; font-size: 24px; font-weight: 600;">
+                      Hello, ${user.username}!
+                    </h2>
+                    
+                    <p style="margin: 0 0 24px 0; color: #374151; font-size: 16px; line-height: 1.6;">
+                      We received a request to reset your password for your NextChat account. Click the button below to create a new password:
+                    </p>
+
+                    <!-- Reset Button -->
+                    <div style="text-align: center; margin: 32px 0;">
+                      <a href="${resetLink}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                        Reset Your Password
+                      </a>
+                    </div>
+
+                    <!-- Alternative Link -->
+                    <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                      <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 14px; font-weight: 500;">
+                        Or copy and paste this link into your browser:
+                      </p>
+                      <p style="margin: 0; color: #3b82f6; font-size: 14px; word-break: break-all;">
+                        <a href="${resetLink}" style="color: #3b82f6; text-decoration: none;">${resetLink}</a>
+                      </p>
+                    </div>
+
+                    <!-- Security Notice -->
+                    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 24px 0; border-radius: 6px;">
+                      <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.5;">
+                        <strong>⚠️ Security Notice:</strong> This link will expire in 15 minutes for your security.
+                      </p>
+                    </div>
+
+                    <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                      If you didn't request a password reset, please ignore this email or contact support if you have concerns about your account security.
+                    </p>
+
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; text-align: center; line-height: 1.5;">
+                      This is an automated message from <strong style="color: #111827;">NextChat</strong>
+                    </p>
+                    <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
+                      © ${new Date().getFullYear()} NextChat. All rights reserved.
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `;
+
     await resend.emails.send({
       from: 'NextChat <onboarding@resend.dev>',
       to: user.email,
-      subject: "Reset your password",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">Password Reset Request</h2>
-          <p>Click the link below to reset your password:</p>
-          <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset Password</a>
-          <p>Or copy and paste this link:</p>
-          <p style="color: #666; word-break: break-all;">${resetLink}</p>
-          <p style="color: #999; font-size: 12px; margin-top: 30px;">This link will expire in 15 minutes.</p>
-          <p style="color: #999; font-size: 12px;">If you didn't request this, please ignore this email.</p>
-        </div>
-      `
+      subject: "🔐 Reset Your NextChat Password",
+      html: emailHtml,
     });
 
     return res.json({
@@ -206,9 +287,14 @@ const forgotPassword = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Forgot password error:", {
+      message: error.message,
+      email: req.body?.email,
+    });
+
     return res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message || "Failed to process password reset request",
     });
   }
 };

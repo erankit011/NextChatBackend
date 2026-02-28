@@ -292,6 +292,7 @@ const forgotPassword = async (req, res) => {
       email: req.body?.email,
     });
 
+    
     return res.status(500).json({
       success: false,
       error: error.message || "Failed to process password reset request",

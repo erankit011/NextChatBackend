@@ -59,14 +59,6 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// 404 handler for API routes
-app.use("/api/*", (req, res) => {
-  res.status(404).json({ 
-    success: false, 
-    error: "API endpoint not found" 
-  });
-});
-
 
 
 

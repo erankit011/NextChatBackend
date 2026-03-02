@@ -278,7 +278,7 @@ const forgotPassword = async (req, res) => {
 
     try {
       const emailResult = await resend.emails.send({
-        from: 'NextChat <onboarding@resend.dev>',
+        from: 'NextChat <noreply@nextchat.com>',
         to: user.email,
         subject: "🔐 Reset Your NextChat Password",
         html: emailHtml,

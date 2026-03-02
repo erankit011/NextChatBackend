@@ -52,8 +52,20 @@ const contactRoutes = require("./routes/contact.routes");
 
 // Mount routes
 app.use("/api/users", userRoutes);
-
 app.use("/api/contact", contactRoutes);
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// 404 handler for API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ 
+    success: false, 
+    error: "API endpoint not found" 
+  });
+});
 
 
 

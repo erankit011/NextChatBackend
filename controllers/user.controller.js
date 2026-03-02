@@ -274,17 +274,36 @@ const forgotPassword = async (req, res) => {
       </html>
     `;
 
-    await resend.emails.send({
-      from: 'NextChat <onboarding@resend.dev>',
-      to: user.email,
-      subject: "🔐 Reset Your NextChat Password",
-      html: emailHtml,
-    });
+    console.log('📧 Attempting to send password reset email to:', user.email);
 
-    return res.json({
-      success: true,
-      message: "Password reset link sent to email",
-    });
+    try {
+      const emailResult = await resend.emails.send({
+        from: 'NextChat <onboarding@resend.dev>',
+        to: user.email,
+        subject: "🔐 Reset Your NextChat Password",
+        html: emailHtml,
+      });
+
+      console.log('✅ Password reset email sent successfully:', emailResult);
+
+      return res.json({
+        success: true,
+        message: "Password reset link sent to email",
+      });
+    } catch (emailError) {
+      console.error("❌ Resend API error:", {
+        error: emailError.message,
+        statusCode: emailError.statusCode,
+        name: emailError.name,
+        userEmail: user.email,
+      });
+
+      // Return success to user even if email fails (security best practice)
+      return res.json({
+        success: true,
+        message: "If the email exists, a password reset link has been sent",
+      });
+    }
 
   } catch (error) {
     console.error("Forgot password error:", {

@@ -150,7 +150,7 @@ const sendContactMessage = async (req, res) => {
 
     await sendEmail({
       to: supportEmail,
-      subject: `🔔 New Support Request from ${name} - NextChat`,
+      subject: `🔔 New Support Request from ${name} - TempChat`,
       html: emailHtml,
     });
 

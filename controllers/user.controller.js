@@ -211,7 +211,7 @@ const forgotPassword = async (req, res) => {
                 <tr>
                   <td style="background-color: #000000; padding: 50px 30px; text-align: center;">
                     <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
-                      NextChat
+                      TempChat
                     </h1>
                   </td>
                 </tr>
@@ -249,7 +249,7 @@ const forgotPassword = async (req, res) => {
                 <tr>
                   <td style="background-color: #ffffff; padding: 30px; border-top: 1px solid #eeeeee;">
                     <p style="margin: 0; color: #999999; font-size: 11px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
-                      © ${new Date().getFullYear()} NextChat &bull; Privacy Policy &bull; Support
+                      © ${new Date().getFullYear()} TempChat &bull; Privacy Policy &bull; Support
                     </p>
                   </td>
                 </tr>
@@ -267,7 +267,7 @@ const forgotPassword = async (req, res) => {
     try {
       const emailResult = await sendEmail({
         to: user.email,
-        subject: "🔐 Reset Your NextChat Password",
+        subject: "🔐 Reset Your TempChat Password",
         html: emailHtml,
       });
 

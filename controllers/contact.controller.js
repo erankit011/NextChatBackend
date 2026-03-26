@@ -1,13 +1,17 @@
-const resend = require("../services/mail.service");
+const { sendEmail } = require("../services/mail.service");
 
 /**
- * Send contact support message via email using Resend
+ * Send contact support message via email using Brevo
  * @route POST /api/contact
  * @access Public
  */
 const sendContactMessage = async (req, res) => {
   try {
     const { name, email, message } = req.body;
+
+    console.log('📧 [Contact Support] Processing submission...');
+    console.log('📧 [Contact Support] From:', name, '<' + email + '>');
+    console.log('📧 [Contact Support] Message length:', message.length, 'characters');
 
     // Generate timestamp for email
     const timestamp = new Date().toLocaleString('en-US', {
@@ -137,16 +141,18 @@ ${message}
       </html>
     `;
 
-    // Send email using Resend
+    // Send email using Brevo
     const supportEmail = process.env.SUPPORT_EMAIL || "atech0840@gmail.com";
     
-    await resend.emails.send({
-      from: 'TempChat Support <support@tempchat.fun>',
+    console.log('📧 [Contact Support] Sending to support email:', supportEmail);
+    
+    await sendEmail({
       to: supportEmail,
-      subject: `🔔 New Support Request from ${name} - TempChat`,
+      subject: `🔔 New Support Request from ${name} - NextChat`,
       html: emailHtml,
-      reply_to: email,
     });
+
+    console.log('✅ [Contact Support] Email sent successfully to:', supportEmail);
 
     return res.status(200).json({
       success: true,
@@ -154,11 +160,13 @@ ${message}
     });
 
   } catch (error) {
-    console.error("Contact form submission error:", {
-      error: error.message,
+    console.error("❌ [Contact Support] Submission failed!");
+    console.error("❌ [Contact Support] Error:", {
+      message: error.message,
       name: error.name,
       timestamp: new Date().toISOString(),
       userEmail: req.body?.email || "unknown",
+      brevoResponse: error.response?.data || null,
     });
 
     let errorMessage = "Failed to send message. Please try again later.";

@@ -2,7 +2,7 @@ const UserModel = require("../models/user.model");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const resend = require("../services/mail.service");
+const { sendEmail } = require("../services/mail.service");
 
 // Helper function to generate JWT token
 const generateToken = (userId) => {
@@ -159,7 +159,10 @@ const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
+    console.log('📧 [Forgot Password] Request received for:', email);
+
     if (!email) {
+      console.warn('⚠️ [Forgot Password] Email not provided');
       return res.status(400).json({
         success: false,
         error: "Email is required",
@@ -168,11 +171,14 @@ const forgotPassword = async (req, res) => {
 
     const user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user) {
+      console.warn('⚠️ [Forgot Password] User not found:', email);
       return res.status(400).json({
         success: false,
         error: "User not found",
       });
     }
+
+    console.log('✅ [Forgot Password] User found:', user.username, '<' + user.email + '>');
 
     const resetToken = jwt.sign(
       { id: user._id },
@@ -180,8 +186,12 @@ const forgotPassword = async (req, res) => {
       { expiresIn: "15m" }
     );
 
+    console.log('🔑 [Forgot Password] Reset token generated (expires in 15 minutes)');
+
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
+
+    console.log('🔗 [Forgot Password] Reset link:', resetLink);
 
     // Modern professional password reset email template
     const emailHtml = `
@@ -202,7 +212,7 @@ const forgotPassword = async (req, res) => {
                 <tr>
                   <td style="background: linear-gradient(135deg, #000000 0%, #434343 100%); padding: 40px 30px; text-align: center;">
                     <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">
-                      TempChat
+                      NextChat
                     </h1>
                     <p style="margin: 12px 0 0 0; color: #e0e0e0; font-size: 16px; font-weight: 500;">
                       Password Reset Request
@@ -220,7 +230,7 @@ const forgotPassword = async (req, res) => {
                     </h2>
                     
                     <p style="margin: 0 0 24px 0; color: #374151; font-size: 16px; line-height: 1.6;">
-                      We received a request to reset your password for your TempChat account. Click the button below to create a new password:
+                      We received a request to reset your password for your NextChat account. Click the button below to create a new password:
                     </p>
 
                     <!-- Reset Button -->
@@ -258,10 +268,10 @@ const forgotPassword = async (req, res) => {
                 <tr>
                   <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
                     <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; text-align: center; line-height: 1.5;">
-                      This is an automated message from <strong style="color: #111827;">TempChat</strong>
+                      This is an automated message from <strong style="color: #111827;">NextChat</strong>
                     </p>
                     <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
-                      © ${new Date().getFullYear()} TempChat. All rights reserved.
+                      © ${new Date().getFullYear()} NextChat. All rights reserved.
                     </p>
                   </td>
                 </tr>
@@ -274,27 +284,29 @@ const forgotPassword = async (req, res) => {
       </html>
     `;
 
-    console.log('📧 Attempting to send password reset email to:', user.email);
+    console.log('📧 [Forgot Password] Sending reset email to:', user.email);
 
     try {
-      const emailResult = await resend.emails.send({
-        from: 'TempChat <noreply@tempchat.fun>',
+      const emailResult = await sendEmail({
         to: user.email,
-        subject: "🔐 Reset Your TempChat Password",
+        subject: "🔐 Reset Your NextChat Password",
         html: emailHtml,
       });
 
-      console.log('✅ Password reset email sent successfully:', emailResult);
+      console.log('✅ [Forgot Password] Reset email sent successfully!');
+      console.log('✅ [Forgot Password] Message ID:', emailResult?.messageId || 'N/A');
+      console.log('✅ [Forgot Password] Recipient:', user.email);
 
       return res.json({
         success: true,
         message: "Password reset link sent to email",
       });
     } catch (emailError) {
-      console.error("❌ Resend API error:", {
-        error: emailError.message,
-        statusCode: emailError.statusCode,
-        name: emailError.name,
+      console.error("❌ [Forgot Password] Email sending failed!");
+      console.error("❌ [Forgot Password] Error:", {
+        message: emailError.message,
+        response: emailError.response?.data || null,
+        status: emailError.response?.status || 'N/A',
         userEmail: user.email,
       });
 
@@ -306,9 +318,11 @@ const forgotPassword = async (req, res) => {
     }
 
   } catch (error) {
-    console.error("Forgot password error:", {
+    console.error("❌ [Forgot Password] Request failed!");
+    console.error("❌ [Forgot Password] Error:", {
       message: error.message,
       email: req.body?.email,
+      timestamp: new Date().toISOString(),
     });
 
     

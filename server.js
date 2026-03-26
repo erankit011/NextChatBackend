@@ -92,17 +92,26 @@ const createSystemMessage = (room, message) => ({
 });
 
 io.on("connection", (socket) => {
-  console.log("🟢 User connected:", socket.id);
+  console.log("🟢 [WebSocket] New connection established");
+  console.log("🟢 [WebSocket] Socket ID:", socket.id);
+  console.log("🟢 [WebSocket] Client IP:", socket.handshake.address);
+  console.log("🟢 [WebSocket] Timestamp:", new Date().toISOString());
 
   // ---------------- JOIN ROOM ----------------
   socket.on("join_room", ({ room, username }) => {
-    if (!room || !username) return;
+    if (!room || !username) {
+      console.warn("⚠️ [WebSocket] Invalid join_room request - missing room or username");
+      return;
+    }
 
     socket.join(room);
     socket.data.room = room;
     socket.data.username = username;
 
-    console.log(`➡️ ${username} joined room ${room}`);
+    console.log(`✅ [WebSocket] User joined room`);
+    console.log(`✅ [WebSocket] Username: ${username}`);
+    console.log(`✅ [WebSocket] Room: ${room}`);
+    console.log(`✅ [WebSocket] Socket ID: ${socket.id}`);
 
     socket.to(room).emit(
       "system_message",
@@ -112,10 +121,16 @@ io.on("connection", (socket) => {
 
   // ---------------- SEND MESSAGE ----------------
   socket.on("send_message", (data) => {
-    if (!data?.room || !data?.message) return;
+    if (!data?.room || !data?.message) {
+      console.warn("⚠️ [WebSocket] Invalid send_message - missing room or message");
+      return;
+    }
+
+    console.log(`💬 [WebSocket] Message sent in room ${data.room}`);
+    console.log(`💬 [WebSocket] From: ${data.author}`);
+    console.log(`💬 [WebSocket] Message: ${data.message.substring(0, 50)}${data.message.length > 50 ? '...' : ''}`);
 
     socket.to(data.room).emit("receive_message", data);
-    // console.log(data.message);
   });
 
   // ---------------- TYPING START ----------------
@@ -142,14 +157,19 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const { room, username } = socket.data;
 
+    console.log("🔴 [WebSocket] User disconnected");
+    console.log("🔴 [WebSocket] Socket ID:", socket.id);
+    
     if (room && username) {
+      console.log(`🔴 [WebSocket] ${username} left room ${room}`);
+      
       socket.to(room).emit(
         "system_message",
         createSystemMessage(room, `${username} left the chat`)
       );
     }
-
-    console.log("🔴 User disconnected:", socket.id);
+    
+    console.log("🔴 [WebSocket] Timestamp:", new Date().toISOString());
   });
 });
 

@@ -34,11 +34,11 @@ const sendContactMessage = async (req, res) => {
             <td align="center">
               <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 
-                <!-- Header with NextChat Branding -->
+                <!-- Header with TempChat Branding -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #000000 0%, #434343 100%); padding: 30px; text-align: center;">
                     <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
-                      NextChat
+                      TempChat
                     </h1>
                     <p style="margin: 8px 0 0 0; color: #e0e0e0; font-size: 14px; font-weight: 500;">
                       Contact Support Request
@@ -93,7 +93,7 @@ const sendContactMessage = async (req, res) => {
                             <span style="color: #6b7280; font-size: 14px; font-weight: 500;">Source:</span>
                           </td>
                           <td style="padding: 8px 0; text-align: right; border-top: 1px solid #e5e7eb;">
-                            <span style="background-color: #000000; color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">NextChat App</span>
+                            <span style="background-color: #000000; color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">TempChat App</span>
                           </td>
                         </tr>
                       </table>
@@ -111,7 +111,7 @@ ${message}
 
                     <!-- Quick Reply Button -->
                     <div style="text-align: center; margin-top: 30px;">
-                      <a href="mailto:${email}?subject=Re: Support Request from NextChat" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; transition: background-color 0.2s;">
+                      <a href="mailto:${email}?subject=Re: Support Request from TempChat" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; transition: background-color 0.2s;">
                         Reply to ${name}
                       </a>
                     </div>
@@ -123,7 +123,7 @@ ${message}
                 <tr>
                   <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
                     <p style="margin: 0; color: #6b7280; font-size: 13px; text-align: center; line-height: 1.5;">
-                      This is an automated message from <strong style="color: #111827;">NextChat Support System</strong><br>
+                      This is an automated message from <strong style="color: #111827;">TempChat Support System</strong><br>
                       Please respond to this request within 24 hours
                     </p>
                   </td>
@@ -138,12 +138,12 @@ ${message}
     `;
 
     // Send email using Resend
-    const supportEmail = process.env.SUPPORT_EMAIL || process.env.EMAIL_USER;
+    const supportEmail = process.env.SUPPORT_EMAIL || "atech0840@gmail.com";
     
     await resend.emails.send({
-      from: 'NextChat Support <onboarding@resend.dev>',
+      from: 'TempChat Support <support@tempchat.com>',
       to: supportEmail,
-      subject: `🔔 New Support Request from ${name} - NextChat`,
+      subject: `🔔 New Support Request from ${name} - TempChat`,
       html: emailHtml,
       reply_to: email,
     });

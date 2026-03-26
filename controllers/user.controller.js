@@ -198,11 +198,11 @@ const forgotPassword = async (req, res) => {
             <td align="center">
               <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 
-                <!-- Header with NextChat Branding -->
+                <!-- Header with TempChat Branding -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #000000 0%, #434343 100%); padding: 40px 30px; text-align: center;">
                     <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">
-                      NextChat
+                      TempChat
                     </h1>
                     <p style="margin: 12px 0 0 0; color: #e0e0e0; font-size: 16px; font-weight: 500;">
                       Password Reset Request
@@ -220,7 +220,7 @@ const forgotPassword = async (req, res) => {
                     </h2>
                     
                     <p style="margin: 0 0 24px 0; color: #374151; font-size: 16px; line-height: 1.6;">
-                      We received a request to reset your password for your NextChat account. Click the button below to create a new password:
+                      We received a request to reset your password for your TempChat account. Click the button below to create a new password:
                     </p>
 
                     <!-- Reset Button -->
@@ -258,10 +258,10 @@ const forgotPassword = async (req, res) => {
                 <tr>
                   <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
                     <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; text-align: center; line-height: 1.5;">
-                      This is an automated message from <strong style="color: #111827;">NextChat</strong>
+                      This is an automated message from <strong style="color: #111827;">TempChat</strong>
                     </p>
                     <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
-                      © ${new Date().getFullYear()} NextChat. All rights reserved.
+                      © ${new Date().getFullYear()} TempChat. All rights reserved.
                     </p>
                   </td>
                 </tr>
@@ -278,9 +278,9 @@ const forgotPassword = async (req, res) => {
 
     try {
       const emailResult = await resend.emails.send({
-        from: 'NextChat <noreply@nextchat.com>',
+        from: 'TempChat <noreply@tempchat.com>',
         to: user.email,
-        subject: "🔐 Reset Your NextChat Password",
+        subject: "🔐 Reset Your TempChat Password",
         html: emailHtml,
       });
 

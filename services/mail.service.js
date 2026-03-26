@@ -25,7 +25,7 @@ const sendEmail = async ({ to, subject, html }) => {
       "https://api.brevo.com/v3/smtp/email",
       {
         sender: {
-          name: "NextChat",
+          name: "TempChat Support",
           email: process.env.BREVO_EMAIL, // verified sender
         },
         to: [{ email: to }],

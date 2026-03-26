@@ -141,7 +141,7 @@ ${message}
     const supportEmail = process.env.SUPPORT_EMAIL || "atech0840@gmail.com";
     
     await resend.emails.send({
-      from: 'TempChat Support <support@tempchat.com>',
+      from: 'TempChat Support <support@tempchat.fun>',
       to: supportEmail,
       subject: `🔔 New Support Request from ${name} - TempChat`,
       html: emailHtml,

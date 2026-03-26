@@ -278,7 +278,7 @@ const forgotPassword = async (req, res) => {
 
     try {
       const emailResult = await resend.emails.send({
-        from: 'TempChat <noreply@tempchat.com>',
+        from: 'TempChat <noreply@tempchat.fun>',
         to: user.email,
         subject: "🔐 Reset Your TempChat Password",
         html: emailHtml,

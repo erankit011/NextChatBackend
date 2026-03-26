@@ -202,76 +202,54 @@ const forgotPassword = async (req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Reset Your Password</title>
       </head>
-      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #ffffff; color: #000000;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9f9f9; padding: 40px 20px;">
           <tr>
             <td align="center">
-              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden;">
                 
-                <!-- Header with TempChat Branding -->
                 <tr>
-                  <td style="background: linear-gradient(135deg, #000000 0%, #434343 100%); padding: 40px 30px; text-align: center;">
-                    <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">
+                  <td style="background-color: #000000; padding: 50px 30px; text-align: center;">
+                    <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
                       NextChat
                     </h1>
-                    <p style="margin: 12px 0 0 0; color: #e0e0e0; font-size: 16px; font-weight: 500;">
-                      Password Reset Request
-                    </p>
                   </td>
                 </tr>
 
-                <!-- Content -->
                 <tr>
-                  <td style="padding: 40px 30px;">
-                    
-                    <!-- Greeting -->
-                    <h2 style="margin: 0 0 20px 0; color: #111827; font-size: 24px; font-weight: 600;">
-                      Hello, ${user.username}!
+                  <td style="padding: 40px 40px;">
+                    <h2 style="margin: 0 0 20px 0; color: #000000; font-size: 22px; font-weight: 600;">
+                      Password Reset
                     </h2>
                     
-                    <p style="margin: 0 0 24px 0; color: #374151; font-size: 16px; line-height: 1.6;">
-                      We received a request to reset your password for your NextChat account. Click the button below to create a new password:
+                    <p style="margin: 0 0 24px 0; color: #444444; font-size: 16px; line-height: 1.6;">
+                      Hello ${user.username},<br><br>
+                      We received a request to reset your password. Click the button below to proceed. If you did not make this request, you can safely ignore this email.
                     </p>
 
-                    <!-- Reset Button -->
-                    <div style="text-align: center; margin: 32px 0;">
-                      <a href="${resetLink}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                        Reset Your Password
+                    <div style="text-align: center; margin: 35px 0;">
+                      <a href="${resetLink}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 18px 45px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                        Reset Password
                       </a>
                     </div>
 
-                    <!-- Alternative Link -->
-                    <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin: 24px 0;">
-                      <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 14px; font-weight: 500;">
-                        Or copy and paste this link into your browser:
-                      </p>
-                      <p style="margin: 0; color: #3b82f6; font-size: 14px; word-break: break-all;">
-                        <a href="${resetLink}" style="color: #3b82f6; text-decoration: none;">${resetLink}</a>
+                    <div style="border: 1px solid #e5e5e5; padding: 15px; margin-bottom: 24px; border-radius: 4px;">
+                      <p style="margin: 0; color: #666666; font-size: 13px; line-height: 1.5; text-align: center;">
+                        <strong>Security Note:</strong> This link expires in 15 minutes.
                       </p>
                     </div>
 
-                    <!-- Security Notice -->
-                    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 24px 0; border-radius: 6px;">
-                      <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.5;">
-                        <strong>⚠️ Security Notice:</strong> This link will expire in 15 minutes for your security.
-                      </p>
-                    </div>
-
-                    <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                      If you didn't request a password reset, please ignore this email or contact support if you have concerns about your account security.
+                    <p style="margin: 0; color: #999999; font-size: 12px; text-align: center;">
+                      Link not working? Copy this into your browser:<br>
+                      <span style="color: #000000; text-decoration: underline; word-break: break-all;">${resetLink}</span>
                     </p>
-
                   </td>
                 </tr>
 
-                <!-- Footer -->
                 <tr>
-                  <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
-                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; text-align: center; line-height: 1.5;">
-                      This is an automated message from <strong style="color: #111827;">NextChat</strong>
-                    </p>
-                    <p style="margin: 0; color: #9ca3af; font-size: 12px; text-align: center;">
-                      © ${new Date().getFullYear()} NextChat. All rights reserved.
+                  <td style="background-color: #ffffff; padding: 30px; border-top: 1px solid #eeeeee;">
+                    <p style="margin: 0; color: #999999; font-size: 11px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                      © ${new Date().getFullYear()} NextChat &bull; Privacy Policy &bull; Support
                     </p>
                   </td>
                 </tr>
@@ -325,7 +303,7 @@ const forgotPassword = async (req, res) => {
       timestamp: new Date().toISOString(),
     });
 
-    
+
     return res.status(500).json({
       success: false,
       error: error.message || "Failed to process password reset request",
